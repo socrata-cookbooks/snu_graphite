@@ -14,6 +14,10 @@ describe 'snu_graphite::default' do
     it 'creates the snu_graphite_base' do
       expect(chef_run).to create_snu_graphite_base('default')
     end
+
+    it 'installs the snu_graphite_carbon_app' do
+      expect(chef_run).to install_snu_graphite_carbon_app('default')
+    end
   end
 
   RSpec.configuration.supported_platforms.each do |os, versions|

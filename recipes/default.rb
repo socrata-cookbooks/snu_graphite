@@ -20,3 +20,4 @@
 #
 
 snu_graphite_base 'default'
+snu_graphite_carbon_app 'default'

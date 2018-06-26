@@ -77,6 +77,37 @@ Actions:
 | `:create` | Create the base Graphite resources |
 | `:remove` | Delete the base Graphite resources |
 
+***snu_graphite_carbon_app***
+
+Manages installation of Carbon.
+
+Syntax:
+
+```ruby
+snu_graphite_carbon_app 'default' do
+  graphite_path '/opt/graphite'
+  version '0.9.12'
+  twisted_version '13.1.0'
+  action :install
+end
+```
+
+Properties:
+
+| Property        | Default           | Description                       |
+|-----------------|-------------------|-----------------------------------|
+| graphite_path   | `'/opt/graphite'` | Path to the graphite installation |
+| version         | `'0.9.12'`        | Version of Carbon to install      |
+| twisted_version | `'13.1.0'`        | Version of Twisted to install     |
+| action          | `:install`        | The action(s) to perform          |
+
+Actions:
+
+| Action     | Description      |
+|------------|------------------|
+| `:install` | Install Carbon   |
+| `:remove`  | Uninstall Carbon |
+
 ## Maintainers
 
 - Jonathan Hartman <j@hartman.io>
