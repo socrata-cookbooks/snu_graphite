@@ -6,11 +6,23 @@
 [cookbook]: https://supermarket.chef.io/cookbooks/snu_graphite
 [travis]: https://travis-ci.org/socrata-cookbooks/snu_graphite
 
-TODO: Enter a brief cookbook description here.
+A Socrata-maintained and -opinionated version of a graphite cookbook, originally based on the existing community one.
 
 ## Requirements
 
-TODO: Describe the supported platforms and Chef versions, additional dependencies, etc.
+This cookbook is continuously tested against the following matrix of platforms and Chef versions:
+
+- Ubuntu 18.04
+- Ubuntu 16.04
+- Ubuntu 14.04
+- Debian 9
+- Debian 8
+
+X
+
+- Chef 14
+- Chef 13
+- Chef 12
 
 ## Usage
 
@@ -20,7 +32,7 @@ TODO: Describe how to use the included public API (whether it be recipes or reso
 
 ***default***
 
-TODO: Describe the default recipe.
+- Sets up the graphite base components.
 
 ## Attributes
 
@@ -30,34 +42,40 @@ TODO: Describe any important attributes.
 
 ## Resources
 
-***snu_graphite***
+***snu_graphite_base***
 
-TODO: Describe the default custom resource.
+Sets up base functionality (user, directories, Python environment) shared by the other graphite resources.
 
 Syntax:
 
 ```ruby
-snu_graphite 'default' do
-  property1 'value1'
-  property2 'value2'
+snu_graphite_base 'default' do
+  graphite_path '/opt/graphite'
+  storage_path '/opt/graphite/storage'
+  user 'graphite'
+  group 'graphite'
+  python_runtime '2'
   action :create
 end
 ```
 
 Properties:
 
-| Property  | Default   | Description              |
-|-----------|-----------|--------------------------|
-| property1 | 'value1'  | A property               |
-| property2 | 'value2'  | Another property         |
-| action    | `:create` | The action(s) to perform |
+| Property          | Default                      | Description                           |
+|-------------------|------------------------------|---------------------------------------|
+| graphite_path     | `'/opt/graphite'`            | Path to the graphite installation     |
+| storage_path      | `"#{graphite_path}/storage"` | Path to graphite data storage         |
+| user              | `'graphite'`                 | The graphite user                     |
+| group             | `'graphite'`                 | The graphite group                    |
+| python_runtime    | `'2'`                        | The runtime to install Graphite with  |
+| action            | `:create`                    | The action(s) to perform              |
 
 Actions:
 
-| Action    | Description         |
-|-----------|---------------------|
-| `:create` | Create the resource |
-| `:remove` | Remove the resource |
+| Action    | Description                        |
+|-----------|------------------------------------|
+| `:create` | Create the base Graphite resources |
+| `:remove` | Delete the base Graphite resources |
 
 ## Maintainers
 

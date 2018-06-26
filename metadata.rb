@@ -12,4 +12,14 @@ chef_version '>= 12.14'
 source_url 'https://github.com/socrata-cookbooks/snu_graphite'
 issues_url 'https://github.com/socrata-cookbooks/snu_graphite/issues'
 
+depends 'poise-python', '>= 1.5'
+depends 'runit', '>= 1.2'
+
 supports 'ubuntu'
+supports 'debian'
+# TODO: Additional platform support(?)
+# supports 'redhat'
+# supports 'centos'
+# supports 'scientific'
+# supports 'fedora'
+# supports 'amazon'

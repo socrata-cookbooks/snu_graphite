@@ -2,7 +2,7 @@
 
 #
 # Cookbook:: snu_graphite
-# Recipe:: default
+# Library:: helpers
 #
 # Copyright:: 2018, Socrata, Inc.
 #
@@ -19,4 +19,14 @@
 # limitations under the License.
 #
 
-snu_graphite_base 'default'
+module SnuGraphiteCookbook
+  # Some shared helpers for the various graphite resources.
+  #
+  # @author Jonathan Hartman <jonathan.hartman@socrata.com>
+  module Helpers
+    DEFAULT_GRAPHITE_VERSION ||= '0.9.12'.freeze
+    DEFAULT_GRAPHITE_PATH ||= '/opt/graphite'.freeze
+    DEFAULT_GRAPHITE_USER ||= 'graphite'.freeze
+    DEFAULT_GRAPHITE_GROUP ||= 'graphite'.freeze
+  end
+end

@@ -7,6 +7,7 @@ require 'simplecov-console'
 
 RSpec.configure do |c|
   c.add_setting :supported_platforms, default: {
+    debian: %w[9.4 8.10],
     ubuntu: %w[18.04 16.04 14.04]
   }
 end

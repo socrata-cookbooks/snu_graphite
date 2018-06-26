@@ -11,8 +11,8 @@ describe 'snu_graphite::default' do
   let(:chef_run) { runner.converge(described_recipe) }
 
   shared_examples_for 'any platform' do
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
+    it 'creates the snu_graphite_base' do
+      expect(chef_run).to create_snu_graphite_base('default')
     end
   end
 
