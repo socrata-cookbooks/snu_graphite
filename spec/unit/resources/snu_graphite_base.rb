@@ -2,7 +2,7 @@
 
 require_relative '../resources'
 
-describe 'resources::snu_graphite_base' do
+shared_context 'resources::snu_graphite_base' do
   include_context 'resources'
 
   let(:resource) { 'snu_graphite_base' }
@@ -63,6 +63,7 @@ describe 'resources::snu_graphite_base' do
             .with(system: true,
                   group: group || 'graphite',
                   home: graphite_path || '/opt/graphite',
+                  manage_home: true,
                   shell: '/bin/false')
         end
 
@@ -126,20 +127,6 @@ describe 'resources::snu_graphite_base' do
           include_context description
 
           it_behaves_like 'any property set'
-        end
-      end
-    end
-  end
-
-  RSpec.configuration.supported_platforms.each do |os, versions|
-    context os.to_s.capitalize do
-      let(:platform) { os.to_s }
-
-      versions.each do |ver|
-        context ver do
-          let(:platform_version) { ver }
-
-          it_behaves_like 'any platform'
         end
       end
     end

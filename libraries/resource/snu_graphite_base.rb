@@ -29,8 +29,6 @@ class Chef
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
     class SnuGraphiteBase < Resource
-      provides :snu_graphite_base
-
       # Default to the shared default Graphite path, user, and group.
       property :graphite_path,
                String,
@@ -60,7 +58,7 @@ class Chef
           system true
           group new_resource.group
           # TODO: Or '/var/lib/graphite'?
-          # TODO: manage_home true?
+          manage_home true
           home new_resource.graphite_path
           shell '/bin/false'
         end
