@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../snu_graphite_app_web'
+require_relative '../snu_graphite_app_base'
 
-describe 'resources::snu_graphite_app_web::debian' do
-  include_context 'resources::snu_graphite_app_web'
+describe 'resources::snu_graphite_app_base::debian' do
+  include_context 'resources::snu_graphite_app_base'
 
   shared_examples_for 'any Debian platform' do
     it_behaves_like 'any platform'
@@ -17,6 +17,12 @@ describe 'resources::snu_graphite_app_web::debian' do
         end
       end
 
+      context 'all default properties' do
+        include_context description
+
+        it_behaves_like 'any property set'
+      end
+
       %w[
         graphite_path
         storage_path
@@ -24,7 +30,6 @@ describe 'resources::snu_graphite_app_web::debian' do
         group
         python_runtime
         version
-        django_version
       ].each do |p|
         context "an overridden #{p} property" do
           include_context description

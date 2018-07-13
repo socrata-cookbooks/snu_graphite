@@ -19,6 +19,7 @@
 # limitations under the License.
 #
 
+require 'chef/resource'
 require_relative 'snu_graphite_app_base'
 
 class Chef
@@ -26,8 +27,15 @@ class Chef
     # A resource for managing the Web app.
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
-    class SnuGraphiteAppWeb < SnuGraphiteAppBase
+    class SnuGraphiteAppWeb < Resource
+      provides :snu_graphite_app_web
+
       property :django_version, String, default: '1.5.5'
+
+      # Inherit all the base resource's properties as well.
+      Chef::Resource::SnuGraphiteAppBase.state_properties.each do |prop|
+        property prop.name, prop.options
+      end
 
       default_action :install
 
@@ -36,7 +44,15 @@ class Chef
       # virtualenv.
       #
       action :install do
-        super()
+        snu_graphite_app_base new_resource.name do
+          Chef::Resource::SnuGraphiteAppBase
+            .state_properties.map(&:name).each do |prop|
+            unless new_resource.send(prop).nil?
+              send(prop, new_resource.send(prop))
+            end
+          end
+          action :install
+        end
 
         python_package 'django' do
           version new_resource.django_version
@@ -58,8 +74,28 @@ class Chef
         end
       end
 
-      # The graphite-web packages will get uninstalled along with the
-      # virtualenv so the :remove action doesn't need to do anything special.
+      #
+      # Uninstall graphite-web and related  packages. Any other cleanup (e.g.
+      # users, graphite dirs, etc.) should be done with a
+      # `snu_graphite_app_base('default') { action :remove }` lest we risk
+      # unintentionally installing another app that happens to be using the
+      # same virtualenv.
+      #
+      action :remove do
+        pkgs = %w[
+          graphite-web
+          pytz
+          pyparsing
+          python-memcached
+          uwsgi
+          django-tagging
+          django
+        ]
+        python_package pkgs do
+          virtualenv new_resource.graphite_path
+          action :remove
+        end
+      end
     end
   end
 end

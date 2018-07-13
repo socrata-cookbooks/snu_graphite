@@ -2,7 +2,7 @@
 
 #
 # Cookbook:: snu_graphite
-# Library:: resource/snu_graphite_app_web_debian
+# Library:: resource/snu_graphite_app_base_debian
 #
 # Copyright:: 2018, Socrata, Inc.
 #
@@ -19,15 +19,15 @@
 # limitations under the License.
 #
 
-require_relative 'snu_graphite_app_web'
+require_relative 'snu_graphite_app_base'
 
 class Chef
   class Resource
-    # A resource for managing the Web app on Debian platforms.
+    # A resource for managing Graphite apps on Debian platforms.
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
-    class SnuGraphiteAppWebDebian < SnuGraphiteAppWeb
-      provides :snu_graphite_app_web, platform_family: 'debian'
+    class SnuGraphiteAppBaseDebian < SnuGraphiteAppBase
+      provides :snu_graphite_app_base, platform_family: 'debian'
 
       #
       # Ensure APT has a fresh cache before doing anything else.

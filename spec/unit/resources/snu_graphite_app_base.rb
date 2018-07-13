@@ -46,7 +46,7 @@ shared_context 'resources::snu_graphite_app_base' do
     end
   end
 
-  shared_examples_for 'any Graphite app' do
+  shared_examples_for 'any platform' do
     context 'the :install action' do
       include_context description
 

@@ -78,6 +78,43 @@ Actions:
 | `:install` | Install the app(s)   |
 | `:remove`  | Uninstall the app(s) |
 
+***snu_graphite_app_base***
+
+Manages installation of the scaffolding that the other app resources install into.
+
+Syntax:
+
+```ruby
+snu_graphite_app_base 'default' do
+  graphite_path '/opt/graphite'
+  storage_path '/opt/graphite/storage'
+  user 'graphite'
+  group 'graphite'
+  python_runtime '2'
+  version '0.9.12'
+  action :install
+end
+```
+
+Properties:
+
+| Property        | Default                   | Description                             |
+|-----------------|---------------------------|-----------------------------------------|
+| graphite_path   | `'/opt/graphite'`         | Path to the Graphite installation       |
+| storage_path    | `'/opt/graphite/storage'` | Path to Graphite storage                |
+| user            | `'graphite'`              | Graphite user                           |
+| group           | `'graphite'`              | Graphite group                          |
+| python_runtime  | `'2'`                     | Python runtime to install Graphite with |
+| version         | `'0.9.12'`                | Version of Carbon to install            |
+| action          | `:install`                | The action(s) to perform                |
+
+Actions:
+
+| Action     | Description                                      |
+|------------|--------------------------------------------------|
+| `:install` | Install Python, create the Graphite user, etc.   |
+| `:remove`  | Delete the Graphite user, uninstall Python, etc. |
+
 ***snu_graphite_app_carbon***
 
 Manages installation of Carbon.
@@ -99,16 +136,16 @@ end
 
 Properties:
 
-| Property        | Default                | Description                             |
-|-----------------|------------------------|-----------------------------------------|
-| graphite_path   | `'/opt/graphite'`      | Path to the Graphite installation       |
-| storage_path | `'/opt/graphite/storage'` | Path to Graphite storage                |
-| user            | `'graphite'`           | Graphite user                           |
-| group           | `'graphite'`           | Graphite group                          |
-| python_runtime  | `'2'`                  | Python runtime to install Graphite with |
-| version         | `'0.9.12'`             | Version of Carbon to install            |
-| twisted_version | `'13.1.0'`             | Version of Twisted to install           |
-| action          | `:install`             | The action(s) to perform                |
+| Property        | Default                   | Description                             |
+|-----------------|---------------------------|-----------------------------------------|
+| graphite_path   | `'/opt/graphite'`         | Path to the Graphite installation       |
+| storage_path    | `'/opt/graphite/storage'` | Path to Graphite storage                |
+| user            | `'graphite'`              | Graphite user                           |
+| group           | `'graphite'`              | Graphite group                          |
+| python_runtime  | `'2'`                     | Python runtime to install Graphite with |
+| version         | `'0.9.12'`                | Version of Carbon to install            |
+| twisted_version | `'13.1.0'`                | Version of Twisted to install           |
+| action          | `:install`                | The action(s) to perform                |
 
 Actions:
 

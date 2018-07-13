@@ -25,7 +25,7 @@ require_relative '../helpers'
 class Chef
   class Resource
     # A base resource for managing the Graphite apps that the carbon and web
-    # resources can inherit from.
+    # resources can wrap for their shared functionality.
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
     class SnuGraphiteAppBase < Resource
