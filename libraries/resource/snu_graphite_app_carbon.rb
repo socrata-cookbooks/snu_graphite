@@ -2,7 +2,7 @@
 
 #
 # Cookbook:: snu_graphite
-# Library:: resource/snu_graphite_base_debian
+# Library:: resource/snu_graphite_app_carbon
 #
 # Copyright:: 2018, Socrata, Inc.
 #
@@ -19,24 +19,36 @@
 # limitations under the License.
 #
 
-require_relative 'snu_graphite_base'
+require_relative 'snu_graphite_app_base'
 
 class Chef
   class Resource
-    # A base resource for managing the essentials shared by other graphite
-    # resources on Debian platforms.
+    # A resource for managing the Carbon app.
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
-    class SnuGraphiteBaseDebian < SnuGraphiteBase
-      provides :snu_graphite_base, platform_family: 'debian'
+    class SnuGraphiteAppCarbon < SnuGraphiteAppBase
+      property :twisted_version, String, default: '13.1.0'
 
       #
-      # Ensure APT has a fresh cache before doing anything else.
+      # Build on the base :install action to install Carbon into the
+      # virtualenv.
       #
-      action :create do
-        apt_update 'default'
+      action :install do
         super()
+
+        python_package 'Twisted' do
+          version new_resource.twisted_version
+          virtualenv new_resource.graphite_path
+        end
+
+        python_package 'carbon' do
+          version new_resource.version
+          virtualenv new_resource.graphite_path
+        end
       end
+
+      # The carbon packages will get uninstalled along with the virtualenv so
+      # the :remove action doesn't need to do anything special.
     end
   end
 end

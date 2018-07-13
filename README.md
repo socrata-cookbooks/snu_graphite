@@ -42,50 +42,55 @@ TODO: Describe any important attributes.
 
 ## Resources
 
-***snu_graphite_base***
+***snu_graphite_app***
 
-Sets up base functionality (user, directories, Python environment) shared by the other graphite resources.
+Manages installation of Graphite apps.
 
 Syntax:
 
 ```ruby
-snu_graphite_base 'default' do
+snu_graphite_app %w[carbon web] do
   graphite_path '/opt/graphite'
   storage_path '/opt/graphite/storage'
   user 'graphite'
   group 'graphite'
   python_runtime '2'
-  action :create
+  version '0.9.12'
+  action :install
 end
 ```
 
 Properties:
 
-| Property          | Default                      | Description                           |
-|-------------------|------------------------------|---------------------------------------|
-| graphite_path     | `'/opt/graphite'`            | Path to the graphite installation     |
-| storage_path      | `"#{graphite_path}/storage"` | Path to graphite data storage         |
-| user              | `'graphite'`                 | The graphite user                     |
-| group             | `'graphite'`                 | The graphite group                    |
-| python_runtime    | `'2'`                        | The runtime to install Graphite with  |
-| action            | `:create`                    | The action(s) to perform              |
+| Property | Default       | Description                                |
+|----------|---------------|--------------------------------------------|
+| app_name | Resource name | The Graphite apps to install               |
+| options  | `{}`          | The options for each graphite_app resource |
+| \*       |               |                                            |
+| action   | `:install`    | The action(s) to perform                   |
+
+\* Any other arbitrary properties passed in will be merged into the options propery and passed on to the underlying `graphite_app_*` resources that the resource creates.
 
 Actions:
 
-| Action    | Description                        |
-|-----------|------------------------------------|
-| `:create` | Create the base Graphite resources |
-| `:remove` | Delete the base Graphite resources |
+| Action     | Description          |
+|------------|----------------------|
+| `:install` | Install the app(s)   |
+| `:remove`  | Uninstall the app(s) |
 
-***snu_graphite_carbon_app***
+***snu_graphite_app_carbon***
 
 Manages installation of Carbon.
 
 Syntax:
 
 ```ruby
-snu_graphite_carbon_app 'default' do
+snu_graphite_app_carbon 'default' do
   graphite_path '/opt/graphite'
+  storage_path '/opt/graphite/storage'
+  user 'graphite'
+  group 'graphite'
+  python_runtime '2'
   version '0.9.12'
   twisted_version '13.1.0'
   action :install
@@ -94,12 +99,16 @@ end
 
 Properties:
 
-| Property        | Default           | Description                       |
-|-----------------|-------------------|-----------------------------------|
-| graphite_path   | `'/opt/graphite'` | Path to the graphite installation |
-| version         | `'0.9.12'`        | Version of Carbon to install      |
-| twisted_version | `'13.1.0'`        | Version of Twisted to install     |
-| action          | `:install`        | The action(s) to perform          |
+| Property        | Default                | Description                             |
+|-----------------|------------------------|-----------------------------------------|
+| graphite_path   | `'/opt/graphite'`      | Path to the Graphite installation       |
+| storage_path | `'/opt/graphite/storage'` | Path to Graphite storage                |
+| user            | `'graphite'`           | Graphite user                           |
+| group           | `'graphite'`           | Graphite group                          |
+| python_runtime  | `'2'`                  | Python runtime to install Graphite with |
+| version         | `'0.9.12'`             | Version of Carbon to install            |
+| twisted_version | `'13.1.0'`             | Version of Twisted to install           |
+| action          | `:install`             | The action(s) to perform                |
 
 Actions:
 
@@ -107,6 +116,45 @@ Actions:
 |------------|------------------|
 | `:install` | Install Carbon   |
 | `:remove`  | Uninstall Carbon |
+
+***snu_graphite_app_web***
+
+Manages installation of the Graphite web app.
+
+Syntax:
+
+```ruby
+snu_graphite_app_web 'default' do
+  graphite_path '/opt/graphite'
+  storage_path '/opt/graphite/storage'
+  user 'graphite'
+  group 'graphite'
+  python_runtime '2'
+  version '0.9.12'
+  django_version '1.5.5'
+  action :install
+end
+```
+
+Properties:
+
+| Property        | Default                | Description                             |
+|-----------------|------------------------|-----------------------------------------|
+| graphite_path   | `'/opt/graphite'`      | Path to the Graphite installation       |
+| storage_path | `'/opt/graphite/storage'` | Path to Graphite storage                |
+| user            | `'graphite'`           | Graphite user                           |
+| group           | `'graphite'`           | Graphite group                          |
+| python_runtime  | `'2'`                  | Python runtime to install Graphite with |
+| version         | `'0.9.12'`             | Version of Carbon to install            |
+| django_version  | `'1.5.5'`              | Version of Django to install           |
+| action          | `:install`             | The action(s) to perform                |
+
+Actions:
+
+| Action     | Description            |
+|------------|------------------------|
+| `:install` | Install graphite-web   |
+| `:remove`  | Uninstall graphite-web |
 
 ## Maintainers
 

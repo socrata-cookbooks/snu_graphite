@@ -2,7 +2,7 @@
 
 #
 # Cookbook:: snu_graphite
-# Library:: resource/snu_graphite_carbon_app
+# Library:: resource/snu_graphite_app_web
 #
 # Copyright:: 2018, Socrata, Inc.
 #
@@ -19,50 +19,47 @@
 # limitations under the License.
 #
 
-require 'chef/resource'
-require_relative '../helpers'
+require_relative 'snu_graphite_app_base'
 
 class Chef
   class Resource
-    # A resource for managing the Carbon app.
+    # A resource for managing the Web app.
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
-    class SnuGraphiteCarbonApp < Resource
-      provides :snu_graphite_carbon_app
-
-      property :graphite_path,
-               String,
-               default: SnuGraphiteCookbook::Helpers::DEFAULT_GRAPHITE_PATH
-      property :version,
-               String,
-               default: SnuGraphiteCookbook::Helpers::DEFAULT_GRAPHITE_VERSION
-      property :twisted_version, String, default: '13.1.0'
+    class SnuGraphiteAppWeb < SnuGraphiteAppBase
+      property :django_version, String, default: '1.5.5'
 
       default_action :install
 
       #
-      # Install the Python packages for Carbon into the virtualenv.
+      # Build on the base :install action to install graphite-web into the
+      # virtualenv.
       #
       action :install do
-        python_package 'Twisted' do
-          version new_resource.twisted_version
+        super()
+
+        python_package 'django' do
+          version new_resource.django_version
           virtualenv new_resource.graphite_path
         end
 
-        python_package 'carbon' do
+        python_package 'django-tagging' do
+          version '0.3.6'
+          virtualenv new_resource.graphite_path
+        end
+
+        python_package %w[pytz pyparsing python-memcached uwsgi] do
+          virtualenv new_resource.graphite_path
+        end
+
+        python_package 'graphite-web' do
           version new_resource.version
           virtualenv new_resource.graphite_path
         end
       end
 
-      #
-      # Uninstall the Carbon Python packages.
-      action :remove do
-        python_package %w[carbon Twisted] do
-          virtualenv new_resource.graphite_path
-          action :remove
-        end
-      end
+      # The graphite-web packages will get uninstalled along with the
+      # virtualenv so the :remove action doesn't need to do anything special.
     end
   end
 end

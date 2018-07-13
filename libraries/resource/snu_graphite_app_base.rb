@@ -2,7 +2,7 @@
 
 #
 # Cookbook:: snu_graphite
-# Library:: resource/snu_graphite_base
+# Library:: resource/snu_graphite_app_base
 #
 # Copyright:: 2018, Socrata, Inc.
 #
@@ -24,11 +24,11 @@ require_relative '../helpers'
 
 class Chef
   class Resource
-    # A base resource for managing the essentials shared by other graphite
-    # resources
+    # A base resource for managing the Graphite apps that the carbon and web
+    # resources can inherit from.
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
-    class SnuGraphiteBase < Resource
+    class SnuGraphiteAppBase < Resource
       # Default to the shared default Graphite path, user, and group.
       property :graphite_path,
                String,
@@ -43,15 +43,21 @@ class Chef
                String,
                default: SnuGraphiteCookbook::Helpers::DEFAULT_GRAPHITE_GROUP
       property :python_runtime, String, default: '2'
+      property :version,
+               String,
+               default: SnuGraphiteCookbook::Helpers::DEFAULT_GRAPHITE_VERSION
 
-      default_action :create
+      default_action :install
 
       #
-      # Do the base work that other graphite resources require.
+      # Do the install work that's common to both the carbon and web app
+      # resources:
       #
-      action :create do
-        declare_resource(:python_runtime, new_resource.python_runtime)
-
+      # - Create the graphite group and user
+      # - Install the Python runtime
+      # - Set up a Python virtualenv
+      #
+      action :install do
         declare_resource(:group, new_resource.group) { system true }
 
         declare_resource(:user, new_resource.user) do
@@ -63,25 +69,35 @@ class Chef
           shell '/bin/false'
         end
 
+        declare_resource(:python_runtime, new_resource.python_runtime)
+
         python_virtualenv new_resource.graphite_path do
           python new_resource.python_runtime
           user new_resource.user
           group new_resource.group
         end
 
-        %w[log whisper rrd].each do |d|
-          directory ::File.join(new_resource.storage_path, d) do
-            owner new_resource.user
-            group new_resource.group
-            mode '0755'
-            recursive true
-          end
+        directory new_resource.storage_path do
+          owner new_resource.user
+          group new_resource.group
+          mode '0755'
+          recursive true
         end
+
+        create_storage_subdirs!
       end
 
       #
-      # Delete the graphite group and user. We can't assume graphite is the
-      # only thing on the node using Python, so the runtime gets left behind.
+      # Do the remove work that's common to both the carbon and web app
+      # resources:
+      #
+      # - Delete the storage directory
+      # - Delete the python virtualenv
+      # - Remove the graphite user and group
+      #
+      # Note the destructiveness of this action and potential unintended
+      # consequences if the carbon and web app are deployed to the same
+      # directories.
       #
       action :remove do
         directory new_resource.storage_path do
@@ -93,6 +109,18 @@ class Chef
 
         declare_resource(:user, new_resource.user) { action :remove }
         declare_resource(:group, new_resource.group) { action :remove }
+      end
+
+      action_class do
+        def create_storage_subdirs!
+          %w[log whisper rrd].each do |d|
+            directory ::File.join(new_resource.storage_path, d) do
+              owner new_resource.user
+              group new_resource.group
+              mode '0755'
+            end
+          end
+        end
       end
     end
   end

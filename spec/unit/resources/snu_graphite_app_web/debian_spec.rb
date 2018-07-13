@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require_relative '../snu_graphite_base'
+require_relative '../snu_graphite_app_web'
 
-describe 'resources::snu_graphite_base::debian' do
-  include_context 'resources::snu_graphite_base'
+describe 'resources::snu_graphite_app_web::debian' do
+  include_context 'resources::snu_graphite_app_web'
 
   shared_examples_for 'any Debian platform' do
     it_behaves_like 'any platform'
 
-    context 'the :create action' do
+    context 'the :install action' do
       include_context description
 
       shared_examples_for 'any property set' do
@@ -17,7 +17,15 @@ describe 'resources::snu_graphite_base::debian' do
         end
       end
 
-      %w[graphite_path storage_path user group python_runtime].each do |p|
+      %w[
+        graphite_path
+        storage_path
+        user
+        group
+        python_runtime
+        version
+        django_version
+      ].each do |p|
         context "an overridden #{p} property" do
           include_context description
 

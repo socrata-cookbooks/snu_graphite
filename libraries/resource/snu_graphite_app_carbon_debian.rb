@@ -2,7 +2,7 @@
 
 #
 # Cookbook:: snu_graphite
-# Recipe:: default
+# Library:: resource/snu_graphite_app_carbon_debian
 #
 # Copyright:: 2018, Socrata, Inc.
 #
@@ -19,4 +19,23 @@
 # limitations under the License.
 #
 
-snu_graphite_app %w[carbon web]
+require_relative 'snu_graphite_app_carbon'
+
+class Chef
+  class Resource
+    # A resource for managing the Carbon app on Debian platforms.
+    #
+    # @author Jonathan Hartman <jonathan.hartman@socrata.com
+    class SnuGraphiteAppCarbonDebian < SnuGraphiteAppCarbon
+      provides :snu_graphite_app_carbon, platform_family: 'debian'
+
+      #
+      # Ensure APT has a fresh cache before doing anything else.
+      #
+      action :install do
+        apt_update 'default'
+        super()
+      end
+    end
+  end
+end
