@@ -20,7 +20,7 @@
 #
 
 require 'chef/resource'
-require_relative '../helpers'
+require_relative '../helpers/base'
 
 class Chef
   class Resource
@@ -29,23 +29,17 @@ class Chef
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
     class SnuGraphiteAppBase < Resource
+      include SnuGraphiteCookbook::Helpers::Base
+
       # Default to the shared default Graphite path, user, and group.
-      property :graphite_path,
-               String,
-               default: SnuGraphiteCookbook::Helpers::DEFAULT_GRAPHITE_PATH
+      property :graphite_path, String, default: DEFAULT_GRAPHITE_PATH
       property :storage_path,
                String,
                default: lazy { |r| ::File.join(r.graphite_path, 'storage') }
-      property :user,
-               String,
-               default: SnuGraphiteCookbook::Helpers::DEFAULT_GRAPHITE_USER
-      property :group,
-               String,
-               default: SnuGraphiteCookbook::Helpers::DEFAULT_GRAPHITE_GROUP
+      property :user, String, default: DEFAULT_GRAPHITE_USER
+      property :group, String, default: DEFAULT_GRAPHITE_GROUP
       property :python_runtime, String, default: '2'
-      property :version,
-               String,
-               default: SnuGraphiteCookbook::Helpers::DEFAULT_GRAPHITE_VERSION
+      property :version, String, default: DEFAULT_GRAPHITE_VERSION
 
       default_action :install
 

@@ -90,6 +90,7 @@ class Chef
                 new_resource.options.each do |k, v|
                   send(k, v) unless v.nil?
                 end
+                action act
               end
             end
           end

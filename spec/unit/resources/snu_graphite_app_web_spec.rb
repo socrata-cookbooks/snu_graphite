@@ -79,14 +79,14 @@ describe 'resources::snu_graphite_app_web' do
         end
 
         it 'installs the other Python packages' do
-          p = %w[pytz pyparsing python-memcached uwsgi]
+          p = 'pytz, pyparsing, python-memcached, uwsgi'
           expect(chef_run).to install_python_package(p)
             .with(virtualenv: graphite_path || '/opt/graphite')
         end
 
         it 'installs the graphite-web package' do
           expect(chef_run).to install_python_package('graphite-web')
-            .with(version: django_version || '1.5.5',
+            .with(version: version || '0.9.12',
                   virtualenv: graphite_path || '/opt/graphite')
         end
       end

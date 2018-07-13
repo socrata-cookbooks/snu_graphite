@@ -50,7 +50,7 @@ describe 'resources::snu_graphite_app_base::debian' do
         context ver do
           let(:platform_version) { ver }
 
-          it_behaves_like 'any platform'
+          it_behaves_like 'any Debian platform'
         end
       end
     end

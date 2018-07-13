@@ -47,7 +47,10 @@ describe 'resources::snu_graphite_app' do
       shared_examples_for 'any property set' do
         it 'installs the carbon app when asked' do
           unless !app_name.nil? && !Array(app_name).include?('carbon')
-            props = options.to_h.merge(graphite_path: graphite_path, user: user)
+            props = options.to_h.merge(
+              graphite_path: graphite_path || '/opt/graphite',
+              user: user || 'graphite'
+            )
             expect(chef_run).to install_snu_graphite_app_carbon('default')
               .with(props)
           end
@@ -55,7 +58,10 @@ describe 'resources::snu_graphite_app' do
 
         it 'installs the web app when asked' do
           unless !app_name.nil? && !Array(app_name).include?('web')
-            props = options.to_h.merge(graphite_path: graphite_path, user: user)
+            props = options.to_h.merge(
+              graphite_path: graphite_path || '/opt/graphite',
+              user: user || 'graphite'
+            )
             expect(chef_run).to install_snu_graphite_app_web('default')
               .with(props)
           end
@@ -83,7 +89,10 @@ describe 'resources::snu_graphite_app' do
       shared_examples_for 'any property set' do
         it 'removes the carbon app when asked' do
           unless !app_name.nil? && !Array(app_name).include?('carbon')
-            props = options.to_h.merge(graphite_path: graphite_path, user: user)
+            props = options.to_h.merge(
+              graphite_path: graphite_path || '/opt/graphite',
+              user: user || 'graphite'
+            )
             expect(chef_run).to remove_snu_graphite_app_carbon('default')
               .with(props)
           end
@@ -91,7 +100,10 @@ describe 'resources::snu_graphite_app' do
 
         it 'removes the web app when asked' do
           unless !app_name.nil? && !Array(app_name).include?('web')
-            props = options.to_h.merge(graphite_path: graphite_path, user: user)
+            props = options.to_h.merge(
+              graphite_path: graphite_path || '/opt/graphite',
+              user: user || 'graphite'
+            )
             expect(chef_run).to remove_snu_graphite_app_web('default')
               .with(props)
           end
