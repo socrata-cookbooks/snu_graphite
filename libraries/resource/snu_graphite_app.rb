@@ -84,10 +84,12 @@ class Chef
       #
       %i[install remove].each do |act|
         action act do
-          Array(new_resource.app_name).each do |app|
-            send("snu_graphite_app_#{app}", 'default') do
-              new_resource.options.each do |k, v|
-                send(k, v) unless v.nil?
+          with_run_context new_resource.run_context do
+            Array(new_resource.app_name).each do |app|
+              send("snu_graphite_app_#{app}", 'default') do
+                new_resource.options.each do |k, v|
+                  send(k, v) unless v.nil?
+                end
               end
             end
           end
