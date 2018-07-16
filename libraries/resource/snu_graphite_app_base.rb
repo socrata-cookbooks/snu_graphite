@@ -19,8 +19,7 @@
 # limitations under the License.
 #
 
-require 'chef/resource'
-require_relative '../helpers/base'
+require_relative 'snu_graphite_base'
 
 class Chef
   class Resource
@@ -28,18 +27,10 @@ class Chef
     # resources can wrap for their shared functionality.
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
-    class SnuGraphiteAppBase < Resource
-      include SnuGraphiteCookbook::Helpers::Base
-
-      # Default to the shared default Graphite path, user, and group.
-      property :graphite_path, String, default: DEFAULT_GRAPHITE_PATH
-      property :storage_path,
-               String,
-               default: lazy { |r| ::File.join(r.graphite_path, 'storage') }
-      property :user, String, default: DEFAULT_GRAPHITE_USER
-      property :group, String, default: DEFAULT_GRAPHITE_GROUP
-      property :python_runtime, String, default: '2'
+    class SnuGraphiteAppBase < SnuGraphiteBase
+      # Add properties for the Graphite version and Python runtime to use.
       property :version, String, default: DEFAULT_GRAPHITE_VERSION
+      property :python_runtime, String, default: '2'
 
       default_action :install
 
