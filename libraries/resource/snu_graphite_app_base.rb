@@ -19,6 +19,7 @@
 # limitations under the License.
 #
 
+require 'chef/dsl/declare_resource'
 require_relative 'snu_graphite_base'
 
 class Chef
@@ -28,11 +29,28 @@ class Chef
     #
     # @author Jonathan Hartman <jonathan.hartman@socrata.com
     class SnuGraphiteAppBase < SnuGraphiteBase
+      include Chef::DSL::DeclareResource
+
       # Add properties for the Graphite version and Python runtime to use.
       property :version, String, default: DEFAULT_GRAPHITE_VERSION
       property :python_runtime, String, default: '2'
 
       default_action :install
+
+      #
+      # A python_virtualenv resource needs to exist at compile time so that any
+      # python_package resources can find it. It doesn't need to be set up,
+      # however, so that piece can still occur in the :install action below.
+      #
+      def after_created
+        pyr = declare_resource(:python_runtime, python_runtime)
+        pyr.action(:nothing)
+        virt = declare_resource(:python_virtualenv, graphite_path)
+        virt.python(python_runtime)
+        virt.user(user)
+        virt.group(group)
+        virt.action(:nothing)
+      end
 
       #
       # Do the install work that's common to both the carbon and web app
@@ -55,7 +73,6 @@ class Chef
         end
 
         declare_resource(:python_runtime, new_resource.python_runtime)
-
         python_virtualenv new_resource.graphite_path do
           python new_resource.python_runtime
           user new_resource.user
