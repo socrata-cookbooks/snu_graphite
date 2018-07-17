@@ -20,3 +20,4 @@
 #
 
 snu_graphite_app %w[carbon web]
+snu_graphite_config_carbon 'cache'

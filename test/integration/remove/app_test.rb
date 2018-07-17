@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-major_minor = command('python2 --version').stderr.split.last.split('.')[0..1]
-                                          .join('.')
+major_minor = command('ls /usr/bin/python2\\.[0-9]*')
+              .stdout.split.first.gsub(%r{^/usr/bin/python}, '')
 
 describe package("python#{major_minor}") do
   it { should be_installed }

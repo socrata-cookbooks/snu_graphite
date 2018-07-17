@@ -193,6 +193,80 @@ Actions:
 | `:install` | Install graphite-web   |
 | `:remove`  | Uninstall graphite-web |
 
+***snu_graphite_config_carbon***
+
+Manages configuration of Carbon.
+
+Syntax:
+
+```ruby
+snu_graphite_config_carbon 'relay' do
+  service :relay
+  enable_logrotation false
+  user 'root'
+  group 'root'
+  max_cache_size 123_456
+  action :create
+end
+```
+
+Properties:
+
+| Property      | Default                            | Description                        |
+|---------------|------------------------------------|------------------------------------|
+| service       | Resource name                      | One of cache, relay, or aggregator |
+| graphite_path | `'/opt/graphite'`                  | Path to the Graphite installation  |
+| storage_path  | `'/opt/graphite/storage'`          | Path to Graphite storage           |
+| user          | `'graphite'`                       | Graphite user                      |
+| group         | `'graphite'`                       | Graphite group                     |
+| path          | `'/opt/graphite/conf/carbon.conf'` | Path to the `carbon.conf`          |
+| config        | \*                                 | \*                                 |
+| \*            | \*                                 | \*                                 |
+| action        | `:create`                          | The action(s) to perform           |
+
+
+\* The default configs for the three Carbon services are:
+
+_Cache_
+
+```
+{
+  enable_logrotation: true,
+  user: '%<user>s',
+  max_cache_size: 'inf',
+  max_updates_per_second: 100,
+  max_creates_per_minute: 200,
+  line_receiver_interface: '0.0.0.0',
+  line_receiver_port: 2003,
+  udp_receiver_port: 2003,
+  pickle_receiver_port: 2004,
+  enable_udp_listener: true,
+  cache_query_port: 7002,
+  cache_write_strategy: 'sorted',
+  use_flow_control: true,
+  log_updates: false,
+  log_cache_hits: false,
+  whisper_autoflush: false,
+  local_data_dir: '%<storage_path>s/whisper'
+}
+
+_Relay_
+
+N/A
+
+_Aggregator_
+
+N/A
+
+The config property can be overridden in its entirety by passing in a new one with e.g. `config(some: 'stuff')`. Individual settings can be overridden and merged into the config by calling them as properties, e.g. `enable_logrotation false`. Any properties called are automatically translated into a format suitable for a `carbon.conf`.
+
+Actions:
+
+| Action    | Description              |
+|-----------|--------------------------|
+| `:create` | Create the `carbon.conf` |
+| `:remove` | Delete the `carbon.conf` |
+
 ## Maintainers
 
 - Jonathan Hartman <j@hartman.io>
