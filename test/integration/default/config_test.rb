@@ -31,3 +31,32 @@ describe file('/opt/graphite/conf/carbon.conf') do
     should eq(expected)
   end
 end
+
+describe file('/opt/graphite/conf/storage-schemas.conf') do
+  it { should exist }
+  its(:owner) { should eq('graphite') }
+  its(:group) { should eq('graphite') }
+  its(:mode) { should cmp('0644') }
+  its(:content) do
+    expected = <<-EXP.gsub(/^ +/, '').strip
+      # This file is managed by Chef.
+      # Any changes to it will be overwritten.
+      [500_carbon]
+      PATTERN = ^carbon\.
+      RETENTIONS = 60s:90d
+
+      [500_core_60s_6days_15min_year]
+      PATTERN = ^core\.
+      RETENTIONS = 60s:1d,15m:7d,1h:365d
+
+      [500_metrics_default]
+      PATTERN = ^metrics\.
+      RETENTIONS = 60s:1d,15m:7d,1h:365d
+
+      [999_default_1min_for_1day]
+      PATTERN = .*
+      RETENTIONS = 60s:1d,5m:14d,1h:365d
+    EXP
+    should eq(expected)
+  end
+end

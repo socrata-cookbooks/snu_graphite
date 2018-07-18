@@ -21,3 +21,13 @@
 
 snu_graphite_app %w[carbon web]
 snu_graphite_config_carbon 'cache'
+
+snu_graphite_config_storage_schema '500_carbon' do
+  pattern '^carbon\\.'
+  retentions '60s:90d'
+end
+
+snu_graphite_config_storage_schema '999_default_1min_for_1day' do
+  pattern '.*'
+  retentions '60s:1d,5m:14d,1h:365d'
+end

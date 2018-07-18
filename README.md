@@ -267,6 +267,47 @@ Actions:
 | `:create` | Create the `carbon.conf` |
 | `:remove` | Delete the `carbon.conf` |
 
+***snu_graphite_config_storage_schema***
+
+Accumulates storage schemas and writes them out to Graphite's `storage-schemas.conf` file.
+
+Syntax:
+
+```ruby
+snu_graphite_config_storage_schema '500_metrics_default' do
+  entry_name '500_metrics_default'
+  graphite_path '/opt/graphite'
+  # TODO: storage_path doesn't actually do anything here.
+  # storage_path '/opt/graphite/storage'
+  user 'graphite'
+  group 'graphite'
+  path '/opt/graphite/conf/storage-schemas.conf'
+  pattern '^metrics\\.'
+  retentions '60s:1d,15m:7d,1h:365d'
+  action :create
+end
+```
+
+Properties:
+
+| Property      | Default                                     | Description                       |
+|---------------|---------------------------------------------|-----------------------------------|
+| entry_name    | Resource name                               | The name of the schema entry      |
+| graphite_path | `'/opt/graphite'`                           | Path to the Graphite installation |
+| user          | `'graphite'`                                | Graphite user                     |
+| group         | `'graphite'`                                | Graphite group                    |
+| path          | `'/opt/graphite/conf/storage-schemas.conf'` | Path to the config file           |
+| pattern       | `nil`                                       | The PATTERN option                |
+| retentions    | `nil`                                       | The RETENTIONS option             |
+| action        | `:create`                                   | The action(s) to perform          |
+
+Actions:
+
+| Action    | Description                       |
+|-----------|-----------------------------------|
+| `:create` | Create the `storage-schemas.conf` |
+| `:remove` | Delete the `storage-schemas.conf` |
+
 ## Maintainers
 
 - Jonathan Hartman <j@hartman.io>
