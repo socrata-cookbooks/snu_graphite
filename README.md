@@ -201,7 +201,7 @@ Syntax:
 
 ```ruby
 snu_graphite_config_carbon 'relay' do
-  service :relay
+  service_name :relay
   enable_logrotation false
   user 'root'
   group 'root'
@@ -214,7 +214,7 @@ Properties:
 
 | Property      | Default                            | Description                        |
 |---------------|------------------------------------|------------------------------------|
-| service       | Resource name                      | One of cache, relay, or aggregator |
+| service_name  | Resource name                      | One of cache, relay, or aggregator |
 | graphite_path | `'/opt/graphite'`                  | Path to the Graphite installation  |
 | storage_path  | `'/opt/graphite/storage'`          | Path to Graphite storage           |
 | user          | `'graphite'`                       | Graphite user                      |

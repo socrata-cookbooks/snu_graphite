@@ -8,13 +8,13 @@ describe 'resources::snu_graphite_config_carbon' do
   let(:resource) { 'snu_graphite_config_carbon' }
 
   %i[
-    service graphite_path storage_path user group path config fake
+    service_name graphite_path storage_path user group path config fake
   ].each do |p|
     let(p) { nil }
   end
   let(:properties) do
     {
-      service: service,
+      service_name: service_name,
       graphite_path: graphite_path,
       storage_path: storage_path,
       user: user,
@@ -272,7 +272,7 @@ describe 'resources::snu_graphite_config_carbon' do
       end
 
       context 'the relay service' do
-        let(:service) { :relay }
+        let(:service_name) { :relay }
 
         it_behaves_like 'any service'
 
@@ -322,7 +322,7 @@ describe 'resources::snu_graphite_config_carbon' do
       end
 
       context 'the aggregator service' do
-        let(:service) { :aggregator }
+        let(:service_name) { :aggregator }
 
         it_behaves_like 'any service'
 
@@ -372,7 +372,7 @@ describe 'resources::snu_graphite_config_carbon' do
       end
 
       context 'an invalid service' do
-        let(:service) { :pants }
+        let(:service_name) { :pants }
 
         it 'raises an error' do
           expect { chef_run }.to raise_error(Chef::Exceptions::ValidationFailed)

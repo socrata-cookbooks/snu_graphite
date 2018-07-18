@@ -34,7 +34,7 @@ class Chef
 
       provides :snu_graphite_config_carbon
 
-      property :service,
+      property :service_name,
                [String, Symbol],
                name_property: true,
                coerce: proc { |v| v.to_sym },
@@ -48,7 +48,7 @@ class Chef
 
       property :config,
                Hash,
-               default: lazy { |r| r.default_config_for(r.service) }
+               default: lazy { |r| r.default_config_for(r.service_name) }
 
       default_action :create
 
@@ -61,7 +61,7 @@ class Chef
       def after_created
         return unless action.include?(:create)
 
-        run_state_config[service] = config
+        run_state_config[service_name] = config
       end
 
       #
