@@ -19,6 +19,7 @@
 # limitations under the License.
 #
 
+require_relative '../helpers/config'
 require_relative '../helpers/config_carbon'
 require_relative 'snu_graphite_base'
 
@@ -110,11 +111,8 @@ class Chef
           recursive true
         end
 
-        cfg = node.run_state[:snu_graphite][:configs][new_resource.path.to_sym]
-        conf_str = SnuGraphiteCookbook::Helpers::ConfigCarbon::Config.new(
-          cache: cfg[:cache],
-          relay: cfg[:relay],
-          aggregator: cfg[:aggregator]
+        conf_str = SnuGraphiteCookbook::Helpers::Config.new(
+          node.run_state[:snu_graphite][:configs][new_resource.path.to_sym]
         ).to_s
 
         file new_resource.path do

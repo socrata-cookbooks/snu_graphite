@@ -23,6 +23,10 @@ require 'iniparse'
 
 module SnuGraphiteCookbook
   module Helpers
+    # Some default settings and helpers for dealing with Graphite's carbon.conf
+    # files.
+    #
+    # @author Jonathan Hartman <jonathan.hartman@socrata.com>
     module ConfigCarbon
       DEFAULT_CACHE_CONFIG ||= {
         enable_logrotation: true,
@@ -61,112 +65,6 @@ module SnuGraphiteCookbook
                    else
                      v
                    end
-        end
-      end
-
-      # Some helper methods for generating carbon.conf files. Chef is packaged
-      # with the iniparse gem, which gets us most of the way there. The file is
-      # essentially an ini document that only ever grows one group deep, but
-      # with a little bit of a difference:
-      #
-      #   - All keys are fully capitalized
-      #   - All bolean values have the first letter capitalized
-      #
-      # @author Jonathan Hartman <jonathan.hartman@socrata.com>
-      class Config
-        #
-        # Initialize a new object from a config hash.
-        #
-        # @param hsh [Hash] a config hash
-        # @return [SnuGraphiteCookbook::Helpers::ConfigCarbon::Config] object
-        #
-        def initialize(hsh = {})
-          @config = hsh || {}
-        end
-
-        #
-        # Return the full string for a carbon.conf file.
-        #
-        # @return [String] the content of a carbon.conf
-        #
-        def to_s
-          [header, body].join("\n")
-        end
-        alias inspect to_s
-
-        private
-
-        attr_accessor :config
-
-        #
-        # Return the body portion of a carbon.conf.
-        #
-        # @return [String] the .ini content, stringified
-        #
-        def body
-          to_ini.to_s
-        end
-
-        #
-        # Convert the config hash into an .ini document object.
-        #
-        # @return [IniParse::Document] the .ini document
-        #
-        def to_ini
-          IniParse.gen do |doc|
-            config.each do |section, data|
-              next if data.nil?
-              doc.section(section) do |section|
-                data.each do |k, v|
-                  section.option(key_for(k), value_for(v))
-                end
-              end
-            end
-          end
-        end
-
-        #
-        # Return the header text for a carbon.conf file.
-        #
-        # @return [String] header comment text
-        #
-        def header
-          <<-CONTENT.gsub(/^ +/, '').strip
-            # This file is managed by Chef.
-            # Any changes to it will be overwritten.
-          CONTENT
-        end
-
-        #
-        # Translate a hash value into a string suitable for a carbon.conf
-        # using the following rules:
-        #
-        #   * String => String
-        #   * Integer => String
-        #   * Boolean => String, capitalized
-        #
-        # @param val [String, Integer, TrueClass, FalseClass] a value
-        # @return [String] that value, ready for a carbon.conf
-        #
-        def value_for(val)
-          case val
-          when TrueClass
-            'True'
-          when FalseClass
-            'False'
-          else
-            val.to_s
-          end
-        end
-
-        #
-        # Translate a symbolized, snake-cased key from a Ruby hash into a
-        # snake-cased, all-caps string for a carbon.conf
-        #
-        # @param key [Symbol] a symbolized, snake-cased key from a Ruby hash
-        # @return [String] that key, stringified and upcased
-        def key_for(key)
-          key.to_s.upcase
         end
       end
     end
