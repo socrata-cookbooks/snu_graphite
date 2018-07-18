@@ -60,3 +60,27 @@ describe file('/opt/graphite/conf/storage-schemas.conf') do
     should eq(expected)
   end
 end
+
+describe file('/opt/graphite/conf/graphTemplates.conf') do
+  it { should exist }
+  its(:owner) { should eq('graphite') }
+  its(:group) { should eq('graphite') }
+  its(:mode) { should cmp('0644') }
+  its(:content) do
+    expected = <<-EXP.gsub(/^ +/, '').strip
+      # This file is managed by Chef.
+      # Any changes to it will be overwritten.
+      [default]
+      background = black
+      foreground = white
+      majorLine = white
+      minorLine = grey
+      lineColors = blue,green,red,purple,brown,yellow,aqua,grey,magenta,pink,gold,rose
+      fontName = Sans
+      fontSize = 10
+      fontBold = False
+      fontItalic = False
+    EXP
+    should eq(expected)
+  end
+end
