@@ -25,6 +25,20 @@ describe 'resources::snu_graphite_app_carbon' do
   end
   let(:name) { 'default' }
 
+  let(:carbon_installed) { nil }
+
+  before do
+    pip = [
+      { 'name' => 'thing1', 'version' => '1.2.3' },
+      { 'name' => 'thing2', 'version' => '4.5.6' }
+    ]
+    if carbon_installed
+      pip << { 'name' => 'carbon', 'version' => carbon_installed }
+    end
+    allow_any_instance_of(Chef::Mixin::ShellOut).to receive(:shell_out!)
+      .and_return(double(stdout: pip.to_json))
+  end
+
   shared_context 'the :install action' do
   end
 
@@ -70,13 +84,33 @@ describe 'resources::snu_graphite_app_carbon' do
         it 'installs the Twisted package' do
           expect(chef_run).to install_python_package('Twisted')
             .with(version: twisted_version || '13.1.0',
-                  virtualenv: graphite_path || '/opt/graphite')
+                  virtualenv: graphite_path || '/opt/graphite',
+                  user: user || 'graphite',
+                  group: group || 'graphite')
         end
 
-        it 'installs the Carbon package' do
-          expect(chef_run).to install_python_package('carbon')
-            .with(version: version || '0.9.12',
-                  virtualenv: graphite_path || '/opt/graphite')
+        it 'installs the whisper and txAMQP packages' do
+          expect(chef_run).to install_python_package('whisper, txAMQP')
+            .with(virtualenv: graphite_path || '/opt/graphite',
+                  user: user || 'graphite',
+                  group: group || 'graphite')
+        end
+
+        it 'executes the Carbon installation' do
+          expect(chef_run).to run_python_execute('Install Carbon')
+            .with(command: '-m pip.__main__ install --no-binary=:all: ' \
+                           '--install-option=' \
+                           "'--prefix=#{graphite_path || '/opt/graphite'}' " \
+                           '--install-option=' \
+                           "'--install-lib=" \
+                           "#{graphite_path || '/opt/graphite'}/lib' " \
+                           "carbon==#{version || '0.9.12'}",
+                  virtualenv: graphite_path || '/opt/graphite',
+                  user: user || 'graphite',
+                  group: group || 'graphite',
+                  environment: {
+                    'PYTHONPATH' => "#{graphite_path || '/opt/graphite'}/lib"
+                  })
         end
       end
 
@@ -101,14 +135,43 @@ describe 'resources::snu_graphite_app_carbon' do
           it_behaves_like 'any property set'
         end
       end
+
+      context 'the desired version of Carbon already installed' do
+        let(:carbon_installed) { '0.9.12' }
+
+        it 'does not execute the Carbon installation' do
+          expect(chef_run).to_not run_python_execute('Install Carbon')
+        end
+      end
+
+      context 'another version of Carbon already installed' do
+        let(:carbon_installed) { '1.2.3' }
+
+        it 'executes the Carbon installation' do
+          expect(chef_run).to run_python_execute('Install Carbon')
+            .with(command: '-m pip.__main__ install --no-binary=:all: ' \
+                           "--install-option='--prefix=/opt/graphite' " \
+                           '--install-option=' \
+                           "'--install-lib=/opt/graphite/lib' " \
+                           'carbon==0.9.12',
+                  virtualenv: '/opt/graphite',
+                  user: 'graphite',
+                  group: 'graphite',
+                  environment: { 'PYTHONPATH' => '/opt/graphite/lib' })
+        end
+      end
     end
 
     context 'the :remove action' do
       include_context description
 
       shared_examples_for 'any property set' do
-        it 'removes the Python packages' do
-          expect(chef_run).to remove_python_package('carbon, Twisted')
+        it 'does not execute the Carbon uninstallation' do
+          expect(chef_run).to_not run_python_execute('Uninstall Carbon')
+        end
+
+        it 'removes the txAMQP, whisper, and Twisted packages' do
+          expect(chef_run).to remove_python_package('txAMQP, whisper, Twisted')
             .with(virtualenv: graphite_path || '/opt/graphite')
         end
       end
@@ -132,6 +195,17 @@ describe 'resources::snu_graphite_app_carbon' do
           include_context description
 
           it_behaves_like 'any property set'
+        end
+      end
+
+      context 'the desired version of Carbon already installed' do
+        let(:carbon_installed) { '0.9.12' }
+
+        it 'executes the Carbon uninstallation' do
+          expect(chef_run).to run_python_execute('Uninstall Carbon')
+            .with(command: '-m pip.__main__ uninstall carbon',
+                  virtualenv: '/opt/graphite',
+                  environment: { 'PYTHONPATH' => '/opt/graphite/lib' })
         end
       end
     end

@@ -16,6 +16,8 @@ class Chef
       property :python, String
       property :version, String
       property :virtualenv, String
+      property :user, String
+      property :group, String
 
       %i[install upgrade remove].each do |act|
         action act do

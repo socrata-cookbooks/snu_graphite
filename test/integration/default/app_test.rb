@@ -40,18 +40,50 @@ end
   end
 end
 
+%w[user group].each do |i|
+  describe command("find /opt/graphite \\! -#{i} graphite -print") do
+    its(:exit_status) { should eq(0) }
+    its(:stdout) { should be_empty }
+  end
+end
+
+describe pip('carbon', '/opt/graphite/bin/pip') do
+  it { should_not be_installed }
+end
+
+describe command('PYTHONPATH=/opt/graphite/lib /opt/graphite/bin/pip show ' \
+                 'carbon') do
+  its(:exit_status) { should eq(0) }
+  its(:stdout) { should match(/^Version: 0\.9\.12$/) }
+  its(:stdout) { should match(%r{^Location: /opt/graphite/lib$}) }
+end
+
 {
-  'Twisted' => '13.1.0',
-  'carbon' => '0.9.12',
   'Django' => '1.5.5',
   'django-tagging' => '0.3.6',
-  'pytz' => nil,
   'pyparsing' => nil,
   'python-memcached' => nil,
-  'uWSGI' => nil
+  'pytz' => nil,
+  'Twisted' => '13.1.0',
+  'txAMQP' => nil,
+  'uWSGI' => nil,
+  'whisper' => nil,
+  'zope.interface' => nil
 }.each do |pkg, ver|
   describe pip(pkg, '/opt/graphite/bin/pip') do
     it { should be_installed }
     its(:version) { should eq(ver) } unless ver.nil?
   end
+
+  describe command("/opt/graphite/bin/pip show #{pkg}") do
+    its(:exit_status) { should eq(0) }
+    its(:stdout) do
+      should match(%r{^Location: /opt/graphite/lib/python2\.7/site-packages$})
+    end
+  end
+end
+
+describe command('/opt/graphite/bin/carbon-client.py --help') do
+  its(:exit_status) { should eq(0) }
+  its(:stdout) { should match(/^Usage: carbon-client\.py/) }
 end
