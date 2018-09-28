@@ -2,7 +2,7 @@
 
 #
 # Cookbook:: snu_graphite
-# Recipe:: default
+# Library:: resource/snu_graphite_app_base_debian
 #
 # Copyright:: 2018, Socrata, Inc.
 #
@@ -19,17 +19,23 @@
 # limitations under the License.
 #
 
-snu_graphite_app %w[carbon web]
-snu_graphite_config_carbon 'cache'
+require_relative 'snu_graphite_app_base'
 
-snu_graphite_config_storage_schema '500_carbon' do
-  pattern '^carbon\\.'
-  retentions '60s:90d'
+class Chef
+  class Resource
+    # A resource for managing Graphite apps on Debian platforms.
+    #
+    # @author Jonathan Hartman <jonathan.hartman@socrata.com
+    class SnuGraphiteAppBaseDebian < SnuGraphiteAppBase
+      provides :snu_graphite_app_base, platform_family: 'debian'
+
+      #
+      # Ensure APT has a fresh cache before doing anything else.
+      #
+      action :install do
+        apt_update 'default'
+        super()
+      end
+    end
+  end
 end
-
-snu_graphite_config_storage_schema '999_default_1min_for_1day' do
-  pattern '.*'
-  retentions '60s:1d,5m:14d,1h:365d'
-end
-
-snu_graphite_service 'cache'

@@ -2,7 +2,7 @@
 
 #
 # Cookbook:: snu_graphite
-# Recipe:: default
+# Library:: helpers/base
 #
 # Copyright:: 2018, Socrata, Inc.
 #
@@ -19,17 +19,16 @@
 # limitations under the License.
 #
 
-snu_graphite_app %w[carbon web]
-snu_graphite_config_carbon 'cache'
-
-snu_graphite_config_storage_schema '500_carbon' do
-  pattern '^carbon\\.'
-  retentions '60s:90d'
+module SnuGraphiteCookbook
+  module Helpers
+    # Some shared helper constants common to all of our graphite resources.
+    #
+    # @author Jonathan Hartman <jonathan.hartman@socrata.com>
+    module Base
+      DEFAULT_GRAPHITE_VERSION ||= '0.9.12'.freeze
+      DEFAULT_GRAPHITE_PATH ||= '/opt/graphite'.freeze
+      DEFAULT_GRAPHITE_USER ||= 'graphite'.freeze
+      DEFAULT_GRAPHITE_GROUP ||= 'graphite'.freeze
+    end
+  end
 end
-
-snu_graphite_config_storage_schema '999_default_1min_for_1day' do
-  pattern '.*'
-  retentions '60s:1d,5m:14d,1h:365d'
-end
-
-snu_graphite_service 'cache'

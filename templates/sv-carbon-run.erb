@@ -1,0 +1,25 @@
+#!/bin/sh
+
+service="<%= @options[:service] %>"
+<% if @options[:instance] -%>
+instance="<%= @options[:instance] %>"
+name="${service}-${instance}"
+<% else -%>
+name="${service}"
+<% end -%>
+user="<%= @options[:user] %>"
+storage_path="<%= @options[:storage_path] %>"
+daemon="<%= @options[:graphite_path] %>/bin/carbon-${service}.py"
+
+ulimit -H -n <%= @options[:file_limit] %>
+ulimit -n <%= @options[:file_limit] %>
+
+exec 2>&1
+
+exec chpst \
+    -u $user \
+    -l $storage_path/${name}.lock -- \
+    $daemon \
+    --pid $storage_path/${name}.pid \
+<%= "    --instance $instance \\" if @options[:instance] -%>
+    --debug start

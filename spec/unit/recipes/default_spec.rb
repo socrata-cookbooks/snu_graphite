@@ -11,8 +11,12 @@ describe 'snu_graphite::default' do
   let(:chef_run) { runner.converge(described_recipe) }
 
   shared_examples_for 'any platform' do
-    it 'converges successfully' do
-      expect { chef_run }.to_not raise_error
+    it 'installs the Graphite apps' do
+      expect(chef_run).to install_snu_graphite_app('carbon, web')
+    end
+
+    it 'configures the Carbon cache' do
+      expect(chef_run).to create_snu_graphite_carbon_config('cache')
     end
   end
 

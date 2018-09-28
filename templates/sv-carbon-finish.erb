@@ -1,0 +1,12 @@
+#!/bin/sh
+
+<% if @options[:instance] -%>
+name="<%= @options[:service] %>-<%= @options[:instance] %>"
+<% else -%>
+name="<%= @options[:service] %>
+<% end -%>
+pid="<%= @options[:storage_path] %>/${name}.pid"
+
+if [ -e $pid ]; then
+  rm -v $pid
+fi
