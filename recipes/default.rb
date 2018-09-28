@@ -31,3 +31,5 @@ snu_graphite_config_storage_schema '999_default_1min_for_1day' do
   pattern '.*'
   retentions '60s:1d,5m:14d,1h:365d'
 end
+
+snu_graphite_service 'cache'
